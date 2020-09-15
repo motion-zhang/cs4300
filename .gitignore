@@ -1,0 +1,10 @@
+
+# ignore IntelliJ IDE specific files
+.idea
+
+# ignore libraries
+node_modules
+
+# ignore build files
+build
+
