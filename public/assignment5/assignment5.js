@@ -5,27 +5,36 @@ const BLUE_RGB = webglUtils.hexToRgb(BLUE_HEX)
 const RECTANGLE = "RECTANGLE"
 const TRIANGLE = "TRIANGLE"
 
-const origin = {x: 0, y: 0}
-const sizeOne = {width: 1, height: 1}
-
+const origin = {x: 0, y: 0, z: 0}
+const sizeOne = {width: 1, height: 1, depth: 1}
+const CUBE = "CUBE"
 let shapes = [
   {
     type: RECTANGLE,
     position: origin,
     dimensions: sizeOne,
     color: BLUE_RGB,
-    translation: {x: 200, y: 100},
-    rotation: {z: 0},
-    scale: {x: 50, y: 50}
+    translation: {x: -15, y:  0, z: -20},
+    scale:       {x:  10, y: 10, z:  10},
+    rotation:    {x:   0, y:  0, z:   0}
   },
   {
     type: TRIANGLE,
     position: origin,
     dimensions: sizeOne,
     color: RED_RGB,
-    translation: {x: 300,y: 100},
-    rotation: {z: 0},
-    scale: {x: 50, y: 50}
+    translation: {x: 15, y:  0, z: -20},
+    scale:       {x: 10, y: 10, z:  10},
+    rotation:    {x:  0, y:  0, z: 180}
+  },
+  {
+    type: CUBE,
+    position: origin,
+    dimensions: sizeOne,
+    color: GREEN_RGB,
+    translation: {x: -15, y: -15, z: -75},
+    scale:       {x:   1, y:   1, z:   1},
+    rotation:    {x:   0, y:  45, z:   0},
   }
 ]
 
@@ -73,6 +82,11 @@ const addShape = (translation, type) => {
 
 const init = () => {
 
+  const program = webglUtils
+      .createProgramFromScripts(gl, "#vertex-shader-3d", "#fragment-shader-3d");
+
+  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
   document.getElementById("tx").onchange = event => updateTranslation(event, "x")
   document.getElementById("ty").onchange = event => updateTranslation(event, "y")
 
@@ -94,10 +108,8 @@ const updateTranslation = (event, axis) => {
 }
 
 const updateScale = (event, axis) => {
-  // TODO: update the shapes scale property
   const value = event.target.value
   shape[selectedShapeIndex].scale[axis] = value
-
 }
 
 const updateRotation = (event, axis) => {
@@ -108,8 +120,6 @@ const updateRotation = (event, axis) => {
 }
 
 const updateColor = (event) => {
-  // TODO: update the color of the shape.
-  // Use webglUtils.hexToRgb to convert hex color to rgb
   const value = event.target.value
   const rgb = webglUtils.hexToRgb(value)
   shapes[selectedShapeIndex].color = rgb
@@ -194,7 +204,6 @@ const selectShape = (selectedIndex) => {
   selectedShapeIndex = selectedIndex
   document.getElementById("tx").value = shapes[selectedIndex].translation.x
   document.getElementById("ty").value = shapes[selectedIndex].translation.y
-  // TODO: update the scale and rotation fields
   document.getElementById('sx').value = shapes[selectedIndex].scale.x
   document.getElementById('sy').value = shapes[selectedIndex].scale.y
   document.getElementById('rz').value = shapes[selectedIndex].rotation.z
