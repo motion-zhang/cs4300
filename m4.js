@@ -276,3 +276,15 @@ const m4 = {
     0,  0,  0,  1,
   ],
 };
+
+let fieldOfViewRadians = m4.degToRad(60)
+const computeModelViewMatrix = (canvas, shape, aspect, zNear, zFar) => {
+
+  let M = m4.perspective(fieldOfViewRadians, aspect, zNear, zFar)
+  M = m4.translate(M, shape.translation.x, shape.translation.y, shape.translation.z)
+  M = m4.xRotate(M, m4.degToRad(shape.rotation.x))
+  M = m4.yRotate(M, m4.degToRad(shape.rotation.y))
+  M = m4.zRotate(M, m4.degToRad(shape.rotation.z))
+  M = m4.scale(M, shape.scale.x, shape.scale.y, shape.scale.z)
+  return M
+}

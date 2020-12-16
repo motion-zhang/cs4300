@@ -110,6 +110,7 @@ let uniformColor
 let bufferCoords
 
 const init = () => {
+
   const canvas = document.querySelector("#canvas");
 
   canvas.addEventListener(

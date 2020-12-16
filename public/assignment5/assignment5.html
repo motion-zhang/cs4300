@@ -8,7 +8,9 @@
             integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0="
             crossorigin="anonymous"></script>
     <script src="webgl-utils.js"></script>
-    <script src="m3.js" type="application/javascript"></script>
+    <script src="m4.js" type="application/javascript"></script>
+    <script src="assignment5.js"></script>
+
 </head>
 <body onload="init();render()">
 <div class="container">
@@ -16,7 +18,7 @@
 
     <canvas id="canvas" width="500px" height="200px"></canvas><br/>
 
-    <div>
+    <div class="column-3">
         <h2>Object List</h2>
         <ol id="object-list">
         </ol>
@@ -28,16 +30,20 @@
         <h2>Translation</h2>
         X: <input id="tx" type="number" value="0" step="5"/><br/>
         Y: <input id="ty" type="number" value="0" step="5"/><br/>
-
+        Z: <input id="tz" type="number" value="0" step="5"/><br/>
 
         <h2>Scaling</h2>
         X: <input id="sx" type="number" value="1" step="0.5"/><br/>
         Y: <input id="sy" type="number" value="1" step="0.5"/><br/>
-
+        Z: <input id="sz" type="number" value="1" min="0" step="0.2"/><br/>
 
         <h2>Rotation</h2>
+        X: <input id="rx" type="number" value="0" step="2"/><br/>
+        Y: <input id="ry" type="number" value="0" step="2"/><br/>
         Z: <input id="rz" type="number" value="0" step="2"/><br/>
 
+        <h2>Field of view</h2>
+        X: <input id="fv" type="number" value="0" step="2"/><br/>
 
         <h2>Color</h2>
         <input id="color" type="color"><br/>

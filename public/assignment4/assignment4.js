@@ -73,6 +73,35 @@ const addShape = (translation, type) => {
 
 const init = () => {
 
+  const canvas = document.querySelector("#canvas");
+
+  canvas.addEventListener(
+      "mousedown",
+      doMouseDown,
+      false);
+
+  gl = canvas.getContext("webgl");
+
+  const program = webglUtils.createProgramFromScripts(gl, "#vertex-shader-2d", "#fragment-shader-2d");
+  gl.useProgram(program);
+
+  // get reference to GLSL attributes and uniforms
+  attributeCoords = gl.getAttribLocation(program, "a_coords");
+  const uniformResolution = gl.getUniformLocation(program, "u_resolution");
+  uniformColor = gl.getUniformLocation(program, "u_color");
+  uniformMatrix = gl.getUniformLocation(program, "u_matrix");
+
+  // initialize coordinate attribute
+  gl.enableVertexAttribArray(attributeCoords);
+
+  // initialize coordinate buffer
+  bufferCoords = gl.createBuffer();
+
+  // configure canvas resolution
+  gl.uniform2f(uniformResolution, gl.canvas.width, gl.canvas.height);
+  gl.clearColor(0, 0, 0, 0);
+  gl.clear(gl.COLOR_BUFFER_BIT);
+
   document.getElementById("tx").onchange = event => updateTranslation(event, "x")
   document.getElementById("ty").onchange = event => updateTranslation(event, "y")
 
@@ -217,7 +246,7 @@ const renderTriangle = (triangle) => {
     - triangle.dimensions.height / 2
 
   const float32Array = new Float32Array([
-    x1, y1,   x2, y2,   x3, y3
+    x1, y1, 0, x3, y3, 0, x2, y2, 0
   ])
 
   gl.bufferData(gl.ARRAY_BUFFER,
@@ -237,9 +266,17 @@ const renderRectangle = (rectangle) => {
     + rectangle.dimensions.height/2;
 
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
-    x1, y1, x2, y1, x1, y2,
-    x1, y2, x2, y1, x2, y2,
+    x1, y1, 0, x2, y1, 0, x1, y2, 0,
+    x1, y2, 0, x2, y1, 0, x2, y2, 0,
   ]), gl.STATIC_DRAW);
 
   gl.drawArrays(gl.TRIANGLES, 0, 6);
+}
+
+const renderStar = (star) => {
+
+}
+
+const renderCircle = (circle) => {
+
 }
