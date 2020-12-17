@@ -17,6 +17,13 @@ let lookAt = true
 // declare the origin as the target we'll look at
 // we'll toggle lookAt on and off
 
+let attributeNormals
+let uniformWorldViewProjection
+let uniformWorldInverseTranspose
+let uniformReverseLightDirectionLocation
+let normalBuffer
+
+let lightSource = [0.4, 0.3, 0.5]
 
 let shapes = [
   {
@@ -126,6 +133,17 @@ const init = () => {
   // initialize coordinate buffer
   bufferCoords = gl.createBuffer();
 
+  attributeNormals = gl.getAttribLocation(program, "a_normals");
+  gl.enableVertexAttribArray(attributeNormals);
+  normalBuffer = gl.createBuffer();
+
+  uniformWorldViewProjection
+      = gl.getUniformLocation(program, "u_worldViewProjection");
+  uniformWorldInverseTranspose
+      = gl.getUniformLocation(program, "u_worldInverseTranspose");
+  uniformReverseLightDirectionLocation
+      = gl.getUniformLocation(program, "u_reverseLightDirection");
+
   // configure canvas resolution
   gl.clearColor(0, 0, 0, 0);
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -223,6 +241,9 @@ const render = () => {
     // each iteration to get the next position
     0);          // offset = 0; i.e., start at the beginning of the buffer
 
+  gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
+  gl.vertexAttribPointer(attributeNormals, 3, gl.FLOAT, false, 0, 0);
+
   gl.enable(gl.CULL_FACE);
   gl.enable(gl.DEPTH_TEST);
 
@@ -230,7 +251,7 @@ const render = () => {
   const zNear = 1;
   const zFar = 2000;
 
-  gl.bindBuffer(gl.ARRAY_BUFFER, bufferCoords);
+
 
   let cameraMatrix = m4.identity()
   if(lookAt) {
@@ -271,6 +292,22 @@ const render = () => {
     const viewProjectionMatrix = m4.multiply(
         projectionMatrix, cameraMatrix)
 
+  let worldMatrix = m4.identity()
+  const worldViewProjectionMatrix
+      = m4.multiply(viewProjectionMatrix, worldMatrix);
+  const worldInverseMatrix
+      = m4.inverse(worldMatrix);
+  const worldInverseTransposeMatrix
+      = m4.transpose(worldInverseMatrix);
+
+  gl.uniformMatrix4fv(uniformWorldViewProjection, false,
+      worldViewProjectionMatrix);
+  gl.uniformMatrix4fv(uniformWorldInverseTranspose, false,
+      worldInverseTransposeMatrix);
+
+  gl.uniform3fv(uniformReverseLightDirectionLocation,
+      m4.normalize(lightSource));
+
 
 
   const $shapeList = $("#object-list")
@@ -305,11 +342,8 @@ const render = () => {
       shape.color.blue, 1);
 
     // apply view projection matrix to all the shapes
-    let M = computeModelViewMatrix(
-        shape, viewProjectionMatrix)
-
-    // apply transformation matrix
-    gl.uniformMatrix4fv(uniformMatrix, false, M)
+    let M = computeModelViewMatrix(shape, worldViewProjectionMatrix)
+    gl.uniformMatrix4fv(uniformWorldViewProjection, false, M)
 
     if(shape.type === RECTANGLE) {
       renderRectangle(shape)
@@ -353,7 +387,7 @@ const selectShape = (selectedIndex) => {
 
 
 const renderCube = (cube) => {
-  const geometry = [
+  let geometry = [
     0,  0,  0,    0, 30,  0,   30,  0,  0,
     0, 30,  0,   30, 30,  0,   30,  0,  0,
     0,  0, 30,   30,  0, 30,    0, 30, 30,
@@ -367,8 +401,21 @@ const renderCube = (cube) => {
     30,  0, 30,   30,  0,  0,   30, 30, 30,
     30, 30, 30,   30,  0,  0,   30, 30,  0
   ]
-  const float32Array = new Float32Array(geometry)
-  gl.bufferData(gl.ARRAY_BUFFER, float32Array, gl.STATIC_DRAW)
-  var primitiveType = gl.TRIANGLES;
+
+  geometry = new Float32Array(geometry)
+  gl.bindBuffer(gl.ARRAY_BUFFER, bufferCoords);
+  gl.bufferData(gl.ARRAY_BUFFER, geometry, gl.STATIC_DRAW)
+
+  var normals = new Float32Array([
+    0,0, 1,  0,0, 1,  0,0, 1,    0,0, 1,  0,0, 1,  0,0, 1,
+    0,0,-1,  0,0,-1,  0,0,-1,    0,0,-1,  0,0,-1,  0,0,-1,
+    0,-1,0,  0,-1,0,  0,-1,0,    0,-1,0,  0,-1,0,  0,-1,0,
+    0, 1,0,  0, 1,0,  0, 1,0,    0, 1,0,  0, 1,0,  0, 1,0,
+    -1, 0,0, -1, 0,0, -1, 0,0,   -1, 0,0, -1, 0,0, -1, 0,0,
+    1, 0,0,  1, 0,0,  1, 0,0,    1, 0,0,  1, 0,0,  1 ,0,0,
+  ]);
+
+  gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
+  gl.bufferData(gl.ARRAY_BUFFER, normals, gl.STATIC_DRAW)
   gl.drawArrays(gl.TRIANGLES, 0, 6 * 6);
 }

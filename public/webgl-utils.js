@@ -169,13 +169,13 @@ const webglUtils = {
   },
   renderRectangle: (rectangle) => {
     const x1 = rectangle.position.x
-      - rectangle.dimensions.width / 2;
+        - rectangle.dimensions.width / 2;
     const y1 = rectangle.position.y
-      - rectangle.dimensions.height / 2;
+        - rectangle.dimensions.height / 2;
     const x2 = rectangle.position.x
-      + rectangle.dimensions.width / 2;
+        + rectangle.dimensions.width / 2;
     const y2 = rectangle.position.y
-      + rectangle.dimensions.height / 2;
+        + rectangle.dimensions.height / 2;
 
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
       x1, y1, 0,  x2, y1, 0,  x1, y2, 0,
@@ -186,16 +186,16 @@ const webglUtils = {
   },
   renderTriangle: (triangle) => {
     const x1 = triangle.position.x
-      - triangle.dimensions.width / 2
+        - triangle.dimensions.width / 2
     const y1 = triangle.position.y
-      + triangle.dimensions.height / 2
+        + triangle.dimensions.height / 2
     const x2 = triangle.position.x
-      + triangle.dimensions.width / 2
+        + triangle.dimensions.width / 2
     const y2 = triangle.position.y
-      + triangle.dimensions.height / 2
+        + triangle.dimensions.height / 2
     const x3 = triangle.position.x
     const y3 = triangle.position.y
-      - triangle.dimensions.height / 2
+        - triangle.dimensions.height / 2
 
     const float32Array = new Float32Array([
       x1, y1, 0, x3, y3, 0, x2, y2, 0])
